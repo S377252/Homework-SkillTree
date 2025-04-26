@@ -1,14 +1,26 @@
+@using Homework_SkillTree.Models
+@using System.Text.Json
+
+
 @{
     ViewData["Title"] = "Home Page";
+
+    var incomeList = TempData["TableData"] != null
+        ? JsonSerializer.Deserialize<List<IncomeTableViewModel>>(TempData.Peek("TableData") as string)
+        : new List<IncomeTableViewModel>();
+
+    // 👇重點！告訴 TempData 不要被下一個 Request 清掉
+    TempData.Keep("TableData");
 }
+
 <div class="container mt-4">
     <div class="card bg-light">
         <div class="card-body">
-            <form>
+            <form action="/Home/AddIncome" method="post">
                 <div class="row mb-3">
                     <label for="category" class="col-sm-2 col-form-label">類別</label>
                     <div class="col-sm-10">
-                        <select id="category" class="form-select">
+                        <select id="category" name="sType" class="form-select">
                             <option value="" selected>請選擇</option>
                             <option>支出</option>
                             <option>收入</option>
@@ -18,19 +30,19 @@
                 <div class="row mb-3">
                     <label for="money" class="col-sm-2 col-form-label">金額</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="money" placeholder="金額">
+                        <input type="text" class="form-control" id="money" name="Amount" placeholder="金額">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label for="date" class="col-sm-2 col-form-label">日期</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="date" placeholder="日期">
+                        <input type="text" class="form-control" id="date" name="sDate" placeholder="日期">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label for="description" class="col-sm-2 col-form-label">備註</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="description" rows="3"></textarea>
+                        <textarea class="form-control" id="description" name="Description" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="row">
@@ -44,36 +56,44 @@
 
     <div class="row mt-4">
         <div class="col-md-12">
-            <table class="table table-bordered table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>類別</th>
-                        <th>日期</th>
-                        <th>金額</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>支出</td>
-                        <td>2025-01-01</td>
-                        <td>300</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>支出</td>
-                        <td>2025-01-02</td>
-                        <td>1,600</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>支出</td>
-                        <td>2025-01-03</td>
-                        <td>8,00</td>
-                    </tr>
-                </tbody>
-            </table>
+            <h2>收支紀錄</h2>
+            @if (incomeList.Any())
+            {
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>類別</th>
+                            <th>日期</th>
+                            <th>金額</th>
+                            <th>備註</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int serialNumber = 1; // 初始化序號
+                        }
+                        @foreach (var item in incomeList)
+                        {
+                            <tr>
+                                <td>@serialNumber</td>
+                                <td>@item.sType</td>
+                                <td>@item.sDate.ToString("yyyy/MM/dd")</td>
+                                <td>@item.Amount.ToString("C")</td>
+                                <td>@item.Description</td>
+                            </tr>
+
+                            serialNumber++; // 每次迴圈後增加序號
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <strong>注意：</strong>目前沒有任何收支紀錄。
+                </div>
+            }
         </div>
     </div>
 </div>
