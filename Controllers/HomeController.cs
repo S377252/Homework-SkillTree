@@ -12,33 +12,14 @@ namespace Homework_SkillTree.Controllers
         {
             _logger = logger;
         }
-      
+
+
+
         public IActionResult Index()
         {
-            var tableData = new List<IncomeTableViewModel> {  };
-            if (TempData["TableData"] != null)
-            {
-                // 如果TempData中有資料，則從TempData中讀取
-                var jsonData = TempData["TableData"] as string;
-                tableData = System.Text.Json.JsonSerializer.Deserialize<List<IncomeTableViewModel>>(jsonData);
-
-            }
-            else
-            {
-                // 如果TempData中沒有資料，則創建一個新的列表
-                // 模擬表格資料
-                tableData = new List<IncomeTableViewModel>
-                {
-                    new IncomeTableViewModel { Id = 1, sType = "支出", sDate = Convert.ToDateTime("2025-01-01"),Amount=3000 ,Description=""},
-                    new IncomeTableViewModel { Id = 2, sType = "支出", sDate = Convert.ToDateTime("2025-01-02"),Amount=1600 ,Description="" },
-                    new IncomeTableViewModel { Id = 3, sType = "支出", sDate = Convert.ToDateTime("2025-01-03"),Amount=8000 ,Description="" }
-                };
-
-                //將資料暫存於tempData中
-                TempData["TableData"] = System.Text.Json.JsonSerializer.Serialize(tableData); 
-            }
-
-            return View();
+            // 從靜態類別中取得資料
+            var tableData = IncomeTableData.GetTableData();
+            return View(tableData);
         }
 
         public IActionResult Privacy()
@@ -55,26 +36,40 @@ namespace Homework_SkillTree.Controllers
         [HttpPost]
         public IActionResult AddIncome(IncomeTableViewModel income)
         {
-            // 從 TempData 中讀取 JSON 並反序列化為物件
-            var tableData = new List<IncomeTableViewModel>();
-            if (TempData["TableData"] != null)
-            {
-                var jsonData = TempData["TableData"] as string;
-                tableData = System.Text.Json.JsonSerializer.Deserialize<List<IncomeTableViewModel>>(jsonData);
-            }
+            // 使用靜態類別新增資料
+            IncomeTableData.AddIncome(income);
 
-            // 計算新的 ID：取目前列表中最大的 ID，然後加 1
-            int newId = tableData.Count()>0 ? tableData.Max(x => x.Id) + 1 : 1;
-            income.Id = newId;
-
-            // 將新的收入項目加入列表
-            tableData.Add(income);
-
-            // 將更新後的資料序列化為 JSON 並存入 TempData
-            TempData["TableData"] = System.Text.Json.JsonSerializer.Serialize(tableData);
-
+            // 重新導向到 Index
             return RedirectToAction("Index");
         }
 
+    }
+    public static class IncomeTableData
+    {
+        // 靜態列表，用於存儲 IncomeTableViewModel 資料
+        private static List<IncomeTableViewModel> _tableData = new List<IncomeTableViewModel>
+        {
+            // 初始資料
+            new IncomeTableViewModel { Id = 1, sType = "支出", sDate = Convert.ToDateTime("2025-01-01"), Amount = 3000, Description = "" },
+            new IncomeTableViewModel { Id = 2, sType = "支出", sDate = Convert.ToDateTime("2025-01-02"), Amount = 1600, Description = "" },
+            new IncomeTableViewModel { Id = 3, sType = "支出", sDate = Convert.ToDateTime("2025-01-03"), Amount = 8000, Description = "" }
+        };
+
+        // 提供讀取資料的方法
+        public static List<IncomeTableViewModel> GetTableData()
+        {
+            return _tableData;
+        }
+
+        // 提供新增資料的方法
+        public static void AddIncome(IncomeTableViewModel income)
+        {
+            // 計算新的 ID
+            int newId = _tableData.Any() ? _tableData.Max(x => x.Id) + 1 : 1;
+            income.Id = newId;
+
+            // 新增資料到列表
+            _tableData.Add(income);
+        }
     }
 }
