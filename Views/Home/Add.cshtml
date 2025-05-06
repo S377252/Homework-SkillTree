@@ -1,4 +1,4 @@
-﻿@model List<Homework_SkillTree.Models.IncomeTableViewModel>
+﻿@model Homework_SkillTree.Models.IncomeCreateViewModel
 
 
 @{
@@ -9,7 +9,8 @@
 <div class="container mt-4">
     <div class="card bg-light">
         <div class="card-body">
-            <form action="/Home/AddIncome" method="post">
+            <h2 class="card-title">新增記帳</h2>
+            <form action="AddIncome" method="post">
                 <div class="row mb-3">
                     <label for="category" class="col-sm-2 col-form-label">類別</label>
                     <div class="col-sm-10">

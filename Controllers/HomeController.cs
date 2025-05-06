@@ -43,6 +43,11 @@ namespace Homework_SkillTree.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Add()
+        {
+            return View();
+        }
+
     }
     public static class IncomeTableData
     {
