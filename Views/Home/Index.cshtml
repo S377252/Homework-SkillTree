@@ -1,16 +1,11 @@
-@model List<Homework_SkillTree.Models.IncomeTableViewModel>
+@using Homework_SkillTree.Models.DB
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<JoinActBook>
 
 
 @{
     ViewData["Title"] = "Home Page";
-
-    // var incomeList = TempData["TableData"] != null
-    //     ? JsonSerializer.Deserialize<List<IncomeTableViewModel>>(TempData.Peek("TableData") as string)
-    //     : new List<IncomeTableViewModel>();
-
-    // // 👇重點！告訴 TempData 不要被下一個 Request 清掉
-    // TempData.Keep("TableData");
-
 }
 
 <div class="container mt-4">
@@ -27,7 +22,7 @@
             <h2>收支紀錄</h2>
             @if (Model.Count>0)
             {
-                <table class="table table-bordered table-hover">
+                <table class="table table-bordered table-hover" style="width:90%;">
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
@@ -39,20 +34,43 @@
                     </thead>
                     <tbody>
                         @{
-                            int serialNumber = 0; // 初始化序號
+                            int serialNumber = (Model.PageNumber - 1) * Model.PageSize; // 初始化序號
                         }
                         @foreach (var item in Model)
                         {
+                            //類型的「支出」字樣顯現為紅色
+                            //類型的「收入」字樣顯現為藍色
+                            var typeClass = item.sType == "支出" ? "text-danger" : "text-primary";
                             <tr>
                                 <td>@(++serialNumber)</td>
-                                <td>@item.sType</td>
-                                <td>@item.sDate.ToString("yyyy/MM/dd")</td>
-                                <td>@item.Amount.ToString("C")</td>
-                                <td>@item.Description</td>
+                                <td class="@typeClass" style="width: 10%;">@item.sType</td><!-- 套用 typeClass -->
+                                <td style="width: 15%;">@item.sDate.ToString("yyyy/MM/dd")</td>
+                                <td style="width: 15%;">@item.Amount.ToString("C")</td>
+                                <td style="width: 50%; word-break: break-word; white-space: normal;">@item.Description</td><!-- 加入換行樣式 -->
+
                             </tr>
                         }
                     </tbody>
                 </table>
+
+                <!-- 分頁控制 -->
+@*                 <div>
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                </div> *@
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }),
+                         new PagedListRenderOptions
+                {
+                    LiElementClasses = new[] { "page-item" },
+                    PageClasses = new[] { "page-link" },
+                    UlElementClasses = new[] { "pagination", "justify-content-center" },
+                    DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                    DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                    DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                    DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                    DisplayLinkToIndividualPages = true,
+                    MaximumPageNumbersToDisplay = 5
+                })
+
             }
             else
             {

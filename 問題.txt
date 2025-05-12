@@ -1,0 +1,2 @@
+5/6
+1.使用EntityFramework，請問AccountBook.cs該如何自動生成？還是都要手動？

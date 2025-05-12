@@ -1,10 +1,12 @@
-﻿@model Homework_SkillTree.Models.IncomeCreateViewModel
+﻿@model Homework_SkillTree.Models.DB.JoinActBook
 
 
 @{
     ViewData["Title"] = "Add Page";
     }
 
+<!-- 顯示整體驗證錯誤 -->
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 <div class="container mt-4">
     <div class="card bg-light">
@@ -16,8 +18,8 @@
                     <div class="col-sm-10">
                         <select id="category" name="sType" class="form-select">
                             <option value="" selected>請選擇</option>
-                            <option>支出</option>
-                            <option>收入</option>
+                            <option >支出</option>
+                            <option >收入</option>
                         </select>
                     </div>
                 </div>

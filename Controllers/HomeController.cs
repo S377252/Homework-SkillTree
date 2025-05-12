@@ -1,25 +1,77 @@
 using System.Diagnostics;
+using Homework_SkillTree.Data;
 using Homework_SkillTree.Models;
+using Homework_SkillTree.Models.DB;
+using Homework_SkillTree.Service;
 using Microsoft.AspNetCore.Mvc;
+using X.PagedList.Extensions;
 
 namespace Homework_SkillTree.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController (
+        ILogger<HomeController> _logger,
+        AccountDBContext dBContext,
+        IAccountService accountService
+        )
+        : Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        // GET: Home/Index 開啟首頁
+        public async Task<IActionResult> Index(int? page)
         {
-            _logger = logger;
+            // 取得所有帳本資料
+            var accountBooks = await accountService.GetAllAccountBooks();
+
+            // 設定每頁顯示的項目數量
+            int pageSize = 10;
+            int pageNumber = page ?? 1; // 如果 page 為 null，預設為第 1 頁
+
+            // 將資料轉換為分頁格式
+            var pagedList = accountBooks.ToPagedList(pageNumber, pageSize);
+
+            // 將分頁資料傳遞到視圖
+            return View(pagedList);
+        }
+
+        // GET: Home/Add 開啟新增頁面
+        public IActionResult Add()
+        {
+            return View();
+        }
+
+        // POST: Home/AddIncome 新增資料
+        [HttpPost]
+        public async Task<IActionResult> AddIncome(JoinActBook income)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Add", income); // 有錯就回原畫面，顯示驗證錯誤
+            }
+
+            // 驗證資料
+            if (string.IsNullOrEmpty(income.Description))
+            {
+                income.Description = "";
+            }
+            // DB新增資料
+            await accountService.AddAccountBook(income);
+
+            // 重新導向到 Index
+            return RedirectToAction("Index");
         }
 
 
-
+        /* 未連DB 新增及顯示列表
         public IActionResult Index()
         {
             // 從靜態類別中取得資料
             var tableData = IncomeTableData.GetTableData();
-            return View(tableData);
+
+            // string>>ViewName
+            // object>>Model
+            // string,object>>顯示string中的View頁面，並傳入object物件，使得在View頁面中可以用宣告Model方式使用這個物件
+            return View(tableData); //將資料傳到 Index【IActionResult 名稱】 頁面
+            //return View("Add",tableData);//將資料傳到 Add 頁面
         }
 
         public IActionResult Privacy()
@@ -43,10 +95,8 @@ namespace Homework_SkillTree.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Add()
-        {
-            return View();
-        }
+
+        */
 
     }
     public static class IncomeTableData

@@ -1,19 +1,22 @@
+using Homework_SkillTree.Data;
+using Homework_SkillTree.Service;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
 
 // 讀取連線字串
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // 註冊 DbContext
-builder.Services.AddDbContext<MyBlogDbContext>(options =>
+builder.Services.AddDbContext<AccountDBContext>(options =>
     options.UseSqlServer(connectionString));
+
+//(注入)加入AccountService
+builder.Services.AddScoped<IAccountService, AccountService>();
+// Add services to the container.
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
