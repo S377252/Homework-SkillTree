@@ -1,0 +1,46 @@
+﻿@model Homework_SkillTree.Models.DB.JoinActBook
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>刪除</h1>
+
+<h3>你確定要刪除這筆資料?</h3>
+<div style ="width:98%">
+    <h4>收支明細</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.sType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.sType)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.sDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.sDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10" style="word-wrap: break-word;">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="刪除" class="btn btn-danger" /> 
+        |
+        <a asp-action="Index" class="btn btn-info">回記帳本</a>
+    </form>
+</div>

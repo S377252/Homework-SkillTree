@@ -1,0 +1,70 @@
+﻿@model Homework_SkillTree.Models.DB.JoinActBook
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>編輯</h1>
+
+<h4>記帳本</h4>
+<hr />
+<div class="row" style="width:98%">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Categoryyy" class="control-label">類別</label>
+                <div class="col-sm-10">
+                    <select id="category" name="sType" class="form-select">
+                        <option value="" selected>請選擇</option>
+                        <option>支出</option>
+                        <option>收入</option>
+                    </select>
+                </div>
+                <span asp-validation-for="Categoryyy" class="text-danger"></span>
+                @{
+                    var sTypeA=Model.sType;
+                    // 這裡可以根據 sTypeA 的值來決定選項的選中狀態
+                    if (sTypeA == "支出")
+                    {
+                        <script>
+                            document.getElementById("category").value = "支出";
+                        </script>
+                    }
+                    else if (sTypeA == "收入")
+                    {
+                        <script>
+                            document.getElementById("category").value = "收入";
+                        </script>
+                    }
+                }
+            </div>
+            <div class="form-group">
+                <label asp-for="sDate" class="control-label"></label>
+                <input asp-for="sDate" class="form-control" />
+                <span asp-validation-for="sDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group" >
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="margin-top:10px;">
+                <input type="submit" value="存檔" class="btn btn-primary" />
+                |
+                <a asp-action="Index" class="btn btn-info">回記帳本</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

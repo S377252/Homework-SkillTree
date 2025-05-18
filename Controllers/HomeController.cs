@@ -4,6 +4,7 @@ using Homework_SkillTree.Models;
 using Homework_SkillTree.Models.DB;
 using Homework_SkillTree.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using X.PagedList.Extensions;
 
 namespace Homework_SkillTree.Controllers
@@ -60,6 +61,113 @@ namespace Homework_SkillTree.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: Admin/JoinActBooks/Details/5
+        public async Task<IActionResult> Details(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var joinActBook = await dBContext.JoinActBooks
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (joinActBook == null)
+            {
+                return NotFound();
+            }
+
+            return View(joinActBook);
+        }
+
+        // GET: Admin/JoinActBooks/Edit/5
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var joinActBook = await dBContext.JoinActBooks.FindAsync(id);
+            if (joinActBook == null)
+            {
+                return NotFound();
+            }
+            return View(joinActBook);
+        }
+        // POST: Admin/JoinActBooks/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,sType,sDate,Amount,Description")] JoinActBook joinActBook)
+        {
+            if (id != joinActBook.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    dBContext.Update(joinActBook);
+                    await dBContext.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!JoinActBookExists(joinActBook.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(joinActBook);
+        }
+
+
+        // GET: Admin/JoinActBooks/Delete/5
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var joinActBook = await dBContext.JoinActBooks
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (joinActBook == null)
+            {
+                return NotFound();
+            }
+
+            return View(joinActBook);
+        }
+
+        // POST: Admin/JoinActBooks/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var joinActBook = await dBContext.JoinActBooks.FindAsync(id);
+            if (joinActBook != null)
+            {
+                dBContext.JoinActBooks.Remove(joinActBook);
+            }
+
+            await dBContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        private bool JoinActBookExists(Guid id)
+        {
+            return dBContext.JoinActBooks.Any(e => e.Id == id);
+        }
 
         /* 未連DB 新增及顯示列表
         public IActionResult Index()

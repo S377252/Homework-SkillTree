@@ -12,6 +12,7 @@ namespace Homework_SkillTree.Models.DB
         [Column("Categoryyy")]
         public int Categoryyy { get; set; } // 資料庫中的數字欄位
 
+        [Display(Name = "收支類別")]// 這是用來在前端顯示的文字欄位
         [NotMapped]
         [Required(ErrorMessage = "請選擇類別")]
         public string sType
@@ -38,6 +39,7 @@ namespace Homework_SkillTree.Models.DB
             }
         }
 
+        [Display(Name = "日期")]// 這是用來在前端顯示的文字欄位
         [Column("Dateee")]
         [Required(ErrorMessage = "請選擇日期")]
         //日期不能大於今日
@@ -45,11 +47,13 @@ namespace Homework_SkillTree.Models.DB
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime sDate { get; set; }
 
+        [Display(Name = "金額")]// 這是用來在前端顯示的文字欄位
         [Column("Amounttt")]
         [Required(ErrorMessage = "請輸入金額")]
         [Range(1, int.MaxValue, ErrorMessage = "金額必須大於0")]
         public int Amount { get; set; }
 
+        [Display(Name = "備註")]// 這是用來在前端顯示的文字欄位
         //長度限制100
         [Column("Remarkkk")]
         [StringLength(100, ErrorMessage = "備註長度不能超過100個字元")]
